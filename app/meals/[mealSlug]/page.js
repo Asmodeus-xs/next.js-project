@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import classes from './page.module.css'
-import { getMeal } from '@/lib/meals'
+import { getMeal, getMeals } from '@/lib/meals'
 import { notFound } from 'next/navigation'
 
 export async function generateMetadata({ params }) {
@@ -15,6 +15,16 @@ export async function generateMetadata({ params }) {
         title: meal.title,
         description: meal.summary
     }
+}
+
+export async function generateStaticParams() {
+
+    const meals = await getMeals()
+    const paths = meals.map(item => ({ mealSlug: item.slug }))
+
+    console.log(paths)
+
+    return paths
 }
 
 
@@ -32,12 +42,12 @@ export default function MealsDetailsPage({ params }) {
         <>
             <header className={classes.header}>
                 <div className={classes.image}>
-                    <Image src={meal.image} alt='meal image' fill />
+                    <Image src={`/next-app/${meal.image}`} alt='meal image' fill />
                 </div>
                 <div className={classes.headerText}>
                     <h1>{meal.title}</h1>
                     <p className={classes.creator}>
-                        by<a href={`mailto:${meal.creator_email}`}>{meal.creator}</a>
+                        by <a href={`mailto:${meal.creator_email}`}>{meal.creator}</a>
                     </p>
                     <p className={classes.summary}>{meal.summary}</p>
                 </div>
